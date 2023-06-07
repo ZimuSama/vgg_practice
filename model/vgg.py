@@ -166,13 +166,12 @@ class NeuralNetwork(nn.Module):
         self.dense = nn.Sequential(
             nn.Flatten(1,3),
             nn.Linear(512*7*7, 4096), 
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(4096, 4096), 
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(4096, classes),
-            nn.Softmax(dim=1)
+            nn.Linear(4096, classes)
         )
 
         self._initialize_weights()
@@ -180,10 +179,13 @@ class NeuralNetwork(nn.Module):
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Linear):
-                nn.init.xavier_uniform_(m.weight)
+                # nn.init.xavier_uniform_(m.weight)
+                nn.init.normal_(m.weight, 0, 1e-2)
+                # nn.init.kaiming_uniform_(m.weight, a=0, mode='fan_in', nonlinearity='relu')
                 m.bias.data.fill_(0.)
             elif isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight)
+                # nn.init.xavier_uniform_(m.weight)
+                nn.init.kaiming_normal_(m.weight, a=0, mode='fan_out', nonlinearity='relu')
                 if m.bias is not None:
                     m.bias.data.fill_(0.)
 
